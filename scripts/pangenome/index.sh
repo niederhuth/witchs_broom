@@ -53,7 +53,7 @@ else
 fi
 
 #Set arguments
-arguments="-t ${threads} --workflow ${worflow} --prefix ${worflow} --ref-fasta ${ref_fasta}"
+arguments="-t ${threads} --workflow ${worflow} --prefix ${worflow}/index --ref-fasta ${ref_fasta}"
 #Set vcf
 if [[ ! -z ${vcf} ]]
 then
