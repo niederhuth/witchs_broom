@@ -36,17 +36,23 @@ then
 fi
 
 #Merge vcf files
-echo "Merging vcf files"
-bcftools merge \
-	--threads ${threads} \
-	-O z \
-	-o vcf/merged.vcf.gz \
-	-0 ${vcf}
-echo "Indexing vcf file"
-bcftools index vcf/merged.vcf.gz
+if [ -f vcf/merged.vcf.gz ]
+then
+	echo "vcf/merged.vcf.gz already exists"
+	echo "To redo merging of vcf files please delete vcf/merged.vcf.gz and resubmit"
+else
+	echo "Merging vcf files"
+	bcftools merge \
+		--threads ${threads} \
+		-O z \
+		-o vcf/merged.vcf.gz \
+		-0 ${vcf}
+	echo "Indexing vcf file"
+	bcftools index vcf/merged.vcf.gz
+fi
 
 #Set arguments
-arguments="-t ${threads} --workflow ${worflow}"
+arguments="-t ${threads} --workflow ${worflow} --prefix ${worflow} --ref-fasta ${ref_fasta}"
 #Set temporary directory
 if [ -z tmp_dir ]
 then
@@ -62,9 +68,6 @@ fi
 
 #Run vg autoindex
 echo "Running vg autoindex --workflow ${worflow}"
-vg autoindex \
-	${arguments} \
-	--prefix ${worflow}/ \
-	--ref-fasta ${ref_fasta}
+vg autoindex ${arguments} 
 
 echo "Done"
