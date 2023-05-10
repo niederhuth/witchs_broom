@@ -13,7 +13,7 @@ conda="${HOME}/miniconda3"
 #Set variables
 threads=20
 PE="TRUE"
-index="$(pwd)"
+index="$(pwd | sed s/Vvinifera.*/Vvinifera/)/pangenome/giraffe/index.giraffe.gbz"
 datatype="wgs"
 
 #Change to current directory
