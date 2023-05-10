@@ -13,7 +13,7 @@ conda="${HOME}/miniconda3"
 #Set variables
 threads=20
 worflow="map" #map, mpmap, rpvg, giraffe
-ref_fasta="$(pwd | sed s/pangenome//)/Vvinifera/ref/Vvinifera.fa"
+ref_fasta="$(pwd | sed s/pangenome\\///)/Vvinifera/ref/Vvinifera.fa"
 vcf="vcf/Dakapo.var.filtered.vcf.gz vcf/Merlot.var.filtered.vcf.gz"
 tmp_dir=
 
@@ -56,7 +56,7 @@ arguments="-t ${threads} --workflow ${worflow} --prefix ${worflow} --ref-fasta $
 #Set temporary directory
 if [ -z tmp_dir ]
 then
-	arguments="${arguments} --tmp-dir ./"
+	arguments="${arguments} --tmp-dir $(pwd)"
 else
 	arguments="${arguments} --tmp-dir ${tmp_dir}"
 fi
