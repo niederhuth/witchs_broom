@@ -12,9 +12,10 @@ conda="${HOME}/miniconda3"
 
 #Set variables
 threads=20
-worflow="map" #map, mpmap, rpvg, giraffe
+worflow="giraffe" #map, mpmap, rpvg, giraffe
 ref_fasta="$(pwd | sed s/pangenome.*//)/Vvinifera/ref/Vvinifera.fa"
 vcf="vcf/Dakapo.var.filtered.vcf.gz vcf/Merlot.var.filtered.vcf.gz"
+gff=
 tmp_dir=
 
 #Change to current directory
@@ -29,10 +30,15 @@ then
 	mkdir ${worflow}
 fi
 
-#Make check for vcf directory, make if it doesn't exist
-if [[ ! -d vcf ]]
+#Check for vcf directory, make if it doesn't exist
+if [[ ! -d vcf && ! -z ${vcf} ]]
 then
 	mkdir vcf
+fi
+#Check for gff directory, make if it doesn't exist
+if [[ ! -d gff && ! -z ${gff} ]]
+then
+	mkdir gff
 fi
 
 #Merge vcf files
@@ -58,6 +64,11 @@ arguments="-t ${threads} --workflow ${worflow} --prefix ${worflow}/index --ref-f
 if [[ ! -z ${vcf} ]]
 then
 	arguments="${arguments} --vcf vcf/merged.vcf.gz"
+fi
+#Add gff/gtf if given
+if [[ ! -z ${gff} ]]
+then
+	arguments="${arguments} --tx-gff gff/merged.gff"
 fi
 #Set temporary directory
 if [ -z ${tmp_dir} ]
