@@ -4,7 +4,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=20
 #SBATCH --mem=60GB
-#SBATCH --job-name call_variants
+#SBATCH --job-name genotype_giraffe
 #SBATCH --output=%x-%j.SLURMout
 
 #Set this variable to the path to wherever you have conda installed
