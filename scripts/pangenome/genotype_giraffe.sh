@@ -4,17 +4,17 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=20
 #SBATCH --mem=60GB
-#SBATCH --job-name giraffe
-#SBATCH --output=job_reports/%x-%j.SLURMout
+#SBATCH --job-name call_variants
+#SBATCH --output=%x-%j.SLURMout
 
 #Set this variable to the path to wherever you have conda installed
 conda="${HOME}/miniconda3"
 
 #Set variables
 threads=20
-PE="TRUE"
 index="$(pwd | sed s/Vvinifera.*/Vvinifera/)/pangenome/giraffe/index.giraffe.gbz"
-datatype="wgs"
+qual_cutoff=5 #-Q X ignore mapping and base qualitiy < X
+ignore_bp=5 #-s X ignore first and last X bp from each read
 
 #Change to current directory
 cd ${PBS_O_WORKDIR}
@@ -28,28 +28,25 @@ species=$(pwd | sed s/^.*\\/data\\/// | sed s/\\/.*//)
 genotype=$(pwd | sed s/.*data\\/${species}\\/// | sed s/\\/.*//)
 sample=$(pwd | sed s/.*data\\/${species}\\/${genotype}\\/// | sed s/\\/.*//)
 
-#Make output directory
-if [[ ! -d giraffe ]]
-then
-	mkdir giraffe
-fi
-
-#Set arguments
-arguments="-t ${threads} -Z ${index}"
-#Set input fastq
-if [ ${PE} = "TRUE" ]
-then
-	arguments="${arguments} -f fastq/${datatype}/trimmed.1.fastq.gz -f fastq/${datatype}/trimmed.2.fastq.gz"
-else
-	arguments="${arguments} -f trimmed.1.fastq.gz"
-fi
 #Set output
 output="giraffe/${sample}_${datatype}"
 
-#Run giraffe
-echo "Running giraffe"
-vg giraffe ${arguments} > ${output}.gam
-echo "Calculating alignment statistics"
-vg stats -v -p ${threads} -a ${output}.gam > ${output}_aln.stats
+# Compute the read support from the gam
+echo "Computing read support"
+vg pack \
+	-t ${threads} \
+	-x ${index} \
+	-g giraffe/aln.gam \
+	-Q ${qual_cutoff} \
+	-s ${ignore_bp} \
+	-o ${output}.pack
+
+# Generate a VCF from the support
+echo "Calling variants"
+vg call \
+	-t ${threads} \
+	-a \
+	${index} \
+	-k ${output}.pack > ${output}.vcf
 
 echo "Done"
