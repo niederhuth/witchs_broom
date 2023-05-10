@@ -59,7 +59,7 @@ then
 	arguments="${arguments} --vcf vcf/merged.vcf.gz"
 fi
 #Set temporary directory
-if [ -z tmp_dir ]
+if [ -z ${tmp_dir} ]
 then
 	arguments="${arguments} --tmp-dir $(pwd)"
 else
