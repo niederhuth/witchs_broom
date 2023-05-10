@@ -53,17 +53,17 @@ fi
 
 #Set arguments
 arguments="-t ${threads} --workflow ${worflow} --prefix ${worflow} --ref-fasta ${ref_fasta}"
+#Set vcf
+if [[ ! -z ${vcf} ]]
+then
+	arguments="${arguments} --vcf vcf/merged.vcf.gz"
+fi
 #Set temporary directory
 if [ -z tmp_dir ]
 then
 	arguments="${arguments} --tmp-dir $(pwd)"
 else
 	arguments="${arguments} --tmp-dir ${tmp_dir}"
-fi
-#Set vcf
-if [[ ! -z ${vcf} ]]
-then
-	arguments="${arguments} --vcf vcf/merged.vcf.gz"
 fi
 
 #Run vg autoindex
