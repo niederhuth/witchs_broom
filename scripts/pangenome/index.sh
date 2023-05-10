@@ -46,6 +46,7 @@ else
 		--threads ${threads} \
 		-O z \
 		-o vcf/merged.vcf.gz \
+		-m none \
 		-0 ${vcf}
 	echo "Indexing vcf file"
 	bcftools index vcf/merged.vcf.gz
